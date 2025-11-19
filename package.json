@@ -1,8 +1,8 @@
 {
-  "name": "bunnygame",
+  "name": "invorayls",
   "private": true,
   "version": "1.0.0",
-  "description": "Play-to-earn gamified companion app with an integrated marketplace. Earn tokens through daily engagement and spend them on premium services",
+  "description": "Decentralized Invoice Factoring Platform",
   "type": "module",
   "scripts": {
     "dev": "vite",

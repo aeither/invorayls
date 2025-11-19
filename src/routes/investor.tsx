@@ -10,7 +10,7 @@ import {
   useChainId,
   useSwitchChain,
 } from 'wagmi';
-import { parseUnits, formatEther } from 'viem';
+import { parseUnits, formatEther, formatUnits } from 'viem';
 import {
   TrendingUp,
   Wallet,
@@ -75,6 +75,22 @@ function InvestorDashboard() {
     functionName: 'asset',
   });
 
+  // Fetch USDC decimals
+  const { data: usdcDecimals } = useReadContract({
+    address: usdcBalance as `0x${string}`,
+    abi: [
+      {
+        inputs: [],
+        name: 'decimals',
+        outputs: [{ name: '', type: 'uint8' }],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ] as const,
+    functionName: 'decimals',
+    query: { enabled: !!usdcBalance },
+  });
+
   const { data: userUsdcBalance } = useReadContract({
     address: usdcBalance as `0x${string}`,
     abi: [
@@ -89,6 +105,13 @@ function InvestorDashboard() {
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: { enabled: !!address && !!usdcBalance },
+  });
+
+  // Fetch vault token decimals
+  const { data: vaultDecimals } = useReadContract({
+    address: contracts.InvoiceVault.address,
+    abi: contracts.InvoiceVault.abi,
+    functionName: 'decimals',
   });
 
   // Contract writes
@@ -134,7 +157,7 @@ function InvestorDashboard() {
 
     try {
       setPendingAction('deposit');
-      const amountInWei = parseUnits(depositAmount, 6); // USDC has 6 decimals
+      const amountInWei = parseUnits(depositAmount, usdcDecimals || 6); // Use fetched decimals
 
       await writeContract({
         address: contracts.InvoiceVault.address,
@@ -157,7 +180,7 @@ function InvestorDashboard() {
 
     try {
       setPendingAction('approve');
-      const amountInWei = parseUnits(depositAmount, 6);
+      const amountInWei = parseUnits(depositAmount, usdcDecimals || 6);
 
       await writeContract({
         address: usdcBalance as `0x${string}`,
@@ -228,8 +251,8 @@ function InvestorDashboard() {
     );
   }
 
-  const usdcBal = userUsdcBalance
-    ? parseFloat(formatEther(userUsdcBalance as bigint))
+  const usdcBal = userUsdcBalance && usdcDecimals
+    ? parseFloat(formatUnits(userUsdcBalance as bigint, usdcDecimals))
     : 0;
 
   return (
@@ -261,6 +284,8 @@ function InvestorDashboard() {
           <VaultStatsCard
             totalAssets={totalAssets || BigInt(0)}
             userBalance={userVaultBalance || BigInt(0)}
+            assetDecimals={usdcDecimals}
+            vaultDecimals={vaultDecimals}
           />
         )}
 
@@ -443,7 +468,7 @@ function InvestorDashboard() {
                   Your Investment Portfolio
                 </h3>
                 <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 mb-4">
-                  {userVaultBalance ? formatEther(userVaultBalance as bigint) : '0'} <span className="text-lg text-white/50">ivUSDC</span>
+                  {userVaultBalance && vaultDecimals ? parseFloat(formatUnits(userVaultBalance as bigint, vaultDecimals)).toFixed(2) : '0.00'} <span className="text-lg text-white/50">ivUSDC</span>
                 </div>
                 <p className="text-blue-200/60 max-w-md mx-auto">
                   Your vault tokens represent a share of all funded invoices and available liquidity in the pool.

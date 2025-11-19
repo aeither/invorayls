@@ -1,4 +1,4 @@
-import { formatEther } from 'viem';
+import { formatUnits } from 'viem';
 import { motion } from 'framer-motion';
 import { FileText, Calendar, User, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 
@@ -28,7 +28,7 @@ export default function InvoiceCard({
   actionDisabled = false,
   showIssuer = false,
 }: InvoiceCardProps) {
-  const amount = parseFloat(formatEther(invoice.amount));
+  const amount = parseFloat(formatUnits(invoice.amount, 6)); // USDC has 6 decimals
   const dueDate = new Date(Number(invoice.dueDate) * 1000);
   const isOverdue = !invoice.paid && dueDate < new Date();
   const daysUntilDue = Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));

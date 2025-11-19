@@ -112,7 +112,7 @@ function BusinessDashboard() {
 
     try {
       setPendingAction('mint');
-      const amountInWei = parseUnits(amount, 18);
+      const amountInWei = parseUnits(amount, 6); // USDC has 6 decimals
       const dueDateTimestamp = Math.floor(new Date(dueDate).getTime() / 1000);
 
       // Create metadata URI (in a real app, this would be uploaded to IPFS)

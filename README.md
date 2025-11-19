@@ -1,80 +1,73 @@
-# Bunny Game Template
+# InvoRayls
 
-**A starter template for building play-to-earn gamified apps.**
+**A regulated real-world asset (RWA) tokenization platform for invoice financing.**
 
-This project is a complete starter kit including a React frontend and a Foundry smart contract environment.
+## Overview
 
-## Getting Started
+InvoRayls bridges the gap between traditional invoice financing and DeFi liquidity. It allows businesses to tokenize their outstanding invoices as NFTs and access early payment from a liquidity pool funded by investors. The platform ensures regulatory compliance through on-chain identity verification (ERC-3643 style) and uses standard ERC-4626 vaults for efficient capital management.
 
-### 1. Install Dependencies
+## Problem & Solution
 
+1.  **Liquidity Trap:** Small businesses wait 30-90 days for payments, stifling growth.
+    *   **Solution:** Instant liquidity by tokenizing invoices and collateralizing them against a decentralized lending pool.
+2.  **Regulatory Barriers:** DeFi pools often lack the compliance required for institutional capital.
+    *   **Solution:** Integrated Identity Registry ensuring only KYC-verified participants (Issuers and Investors) can transact.
+3.  **Fragmented Standards:** Custom implementation risks security and interoperability.
+    *   **Solution:** Built on robust standards—ERC-721 for unique assets (invoices) and ERC-4626 for standardized, yield-bearing vaults.
+
+## Architecture
+
+The system consists of three core smart contracts working in unison:
+
+*   **IdentityRegistry.sol**: Acts as the gatekeeper. It maintains a whitelist of verified addresses (Business/Investor). All restricted actions (minting invoices, depositing funds) check against this registry first.
+*   **InvoiceToken.sol (ERC-721)**: Represents the invoice as a unique NFT.
+    *   Stores metadata: Amount, Due Date, Issuer, Payer.
+    *   Enforces permissioned transfers; tokens can only be transferred to verified addresses.
+*   **InvoiceVault.sol (ERC-4626)**: The liquidity engine.
+    *   **Investors** deposit USDC to receive `ivUSDC` (vault shares).
+    *   **The Vault** funds valid invoices, transferring USDC to the issuer.
+    *   **Repayment** flows back into the vault, increasing the value of shares for all investors.
+
+### Frontend
+- **Business Dashboard**: Mint new invoices, track status, and mark as paid.
+- **Investor Dashboard**: Deposit/Withdraw USDC, view APY, and track portfolio performance.
+- **Tech Stack**: React 18, TypeScript, Wagmi/Viem, Tailwind CSS 4, Foundry.
+
+## Details
+
+### Smart Contracts
+Located in `contracts/src/`:
+- `InvoiceToken.sol`: NFT logic with `_beforeTokenTransfer` hooks for identity checks.
+- `InvoiceVault.sol`: Extension of OpenZeppelin's ERC4626 to handle invoice funding logic.
+- `IdentityRegistry.sol`: Simple allowlist management for simulation.
+
+### Getting Started
+
+**1. Install Dependencies**
 ```bash
 pnpm install
+cd contracts && forge install
 ```
 
-### 2. Configuration
-
-Copy `env.example` to `.env` and fill in the values:
-
+**2. Deploy Contracts**
 ```bash
-cp env.example .env
+# In /contracts directory
+forge script script/DeployInvoiceSystem.s.sol --rpc-url <your_rpc> --broadcast
 ```
 
-* `VITE_WALLETCONNECT_PROJECT_ID`: Get one from [WalletConnect Cloud](https://cloud.walletconnect.com).
-* Contract Addresses: Fill these in after deploying the contracts.
+**3. Configure Frontend**
+- Copy `env.example` to `.env`.
+- Update contract addresses in `scripts/deployment-addresses.json` or `.env` if applicable.
+- Run `pnpm tsx scripts/fetchABI.ts` to sync ABIs.
 
-### 3. Smart Contracts
-
-The contracts are located in `contracts/`.
-
-```bash
-cd contracts
-# Install dependencies
-forge install
-
-# Run tests
-forge test
-
-# Deploy (example for MegaETH testnet)
-forge script script/BunnyGame.s.sol --rpc-url <your_rpc_url> --broadcast --private-key <your_private_key>
-```
-
-After deployment, update the contract addresses in your `.env` file in the root directory.
-
-### 4. Generate ABIs
-
-After deploying or modifying contracts, run the ABI fetcher to update the frontend:
-
-```bash
-# Run from root
-pnpm tsx scripts/fetchABI.ts
-```
-
-### 5. Run Frontend
-
+**4. Run App**
 ```bash
 pnpm dev
 ```
 
-## Project Structure
+## What Next
 
-- `contracts/`: Foundry project with smart contracts
-  - `src/`: Contract source code
-    - `tokens/`: ERC20 token contracts
-    - `DailyRewards.sol`: Daily check-in logic
-    - `BunnyGame.sol`: Main game logic
-  - `script/`: Deployment scripts
-- `src/`: React frontend
-  - `libs/`: ABI and constants (auto-generated via `scripts/fetchABI.ts`)
-  - `routes/`: Application pages
-  - `wagmi.ts`: Web3 configuration
-- `scripts/`: Utility scripts
-  - `fetchABI.ts`: Extracts ABIs from Foundry output to frontend
-
-## Tech Stack
-
-- **Frontend**: React 18, TypeScript, TanStack Router, Tailwind CSS 4
-- **Blockchain**: Wagmi, Viem, OnchainKit
-- **Social**: Farcaster MiniApp SDK
-- **Smart Contracts**: Solidity (Foundry)
-- **State**: TanStack Query
+-   **Credit Scoring**: Integrate off-chain credit risk assessment (Oracle) to set dynamic interest rates per invoice.
+-   **Secondary Market**: Allow investors to trade fractionalized parts of specific high-yield invoices.
+-   **Automated Repayment**: Integrate with payment gateways to automatically settle on-chain debt when fiat payment is received.
+-   **Legal Framework**: Wrap the DAO/Vault in a legal entity to enforce real-world claims on defaulted invoices.

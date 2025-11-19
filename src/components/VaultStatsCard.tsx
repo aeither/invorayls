@@ -6,17 +6,21 @@ interface VaultStatsCardProps {
   totalAssets: bigint;
   userBalance: bigint;
   sharePrice?: bigint;
+  assetDecimals?: number;
+  vaultDecimals?: number;
 }
 
 export default function VaultStatsCard({
   totalAssets,
   userBalance,
   sharePrice,
+  assetDecimals = 6,
+  vaultDecimals = 6,
 }: VaultStatsCardProps) {
-  const totalAssetsFormatted = parseFloat(formatUnits(totalAssets, 6));
-  const userBalanceFormatted = parseFloat(formatUnits(userBalance, 6));
+  const totalAssetsFormatted = parseFloat(formatUnits(totalAssets, assetDecimals));
+  const userBalanceFormatted = parseFloat(formatUnits(userBalance, vaultDecimals));
   const sharePriceFormatted = sharePrice
-    ? parseFloat(formatUnits(sharePrice, 6))
+    ? parseFloat(formatUnits(sharePrice, assetDecimals))
     : 1;
 
   return (
