@@ -6,22 +6,22 @@ export default function BottomNavigation() {
 
   const navItems = [
     {
-      id: 'bunny',
-      label: 'Bunny',
-      icon: '🐰',
+      id: 'home',
+      label: 'Home',
+      icon: '🏠',
       path: '/'
     },
     {
-      id: 'shop',
-      label: 'Shop',
-      icon: '🛒',
-      path: '/shop'
+      id: 'business',
+      label: 'Business',
+      icon: '📄',
+      path: '/business'
     },
     {
-      id: 'market',
-      label: 'Market',
-      icon: '🏪',
-      path: '/market'
+      id: 'investor',
+      label: 'Investor',
+      icon: '💰',
+      path: '/investor'
     }
   ]
 
