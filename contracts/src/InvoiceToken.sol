@@ -1,92 +1,99 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./IdentityRegistry.sol";
 
-/// Permissioned Invoice token (ERC-3643 inspired, not full ERC-721)
-contract InvoiceToken {
+/// @title Invoice Token (ERC-721 with ERC-3643 Style Permissions)
+/// @notice Represents Real World Asset Invoices as unique tokens.
+/// @dev Implements permissioned transfers via IdentityRegistry.
+contract InvoiceToken is ERC721URIStorage, Ownable {
     struct Invoice {
         uint256 amount;
         address issuer;
         address payer;
         uint256 dueDate;
         bool paid;
+        bool exists;
     }
 
-    IdentityRegistry public identity;
-    Invoice[] public invoices;
-    mapping(uint256 => address) public invoiceOwner;
-    mapping(address => uint256[]) public ownedInvoices;
-    address public admin;
-    bool public paused;
-    mapping(address => bool) public frozen;
+    IdentityRegistry public identityRegistry;
+    
+    // Mapping from token ID to Invoice details
+    mapping(uint256 => Invoice) public invoices;
+    uint256 private _nextTokenId;
 
     event InvoiceMinted(uint256 indexed invoiceId, address indexed issuer, address payer, uint256 amount, uint256 dueDate);
     event InvoicePaid(uint256 indexed invoiceId, uint256 amount);
-    event Transfer(uint256 indexed invoiceId, address from, address to);
 
-    constructor(address _identity) {
-        identity = IdentityRegistry(_identity);
-        admin = msg.sender;
+    constructor(address _identityRegistry) ERC721("InvoiceToken", "INVC") {
+        identityRegistry = IdentityRegistry(_identityRegistry);
     }
 
-    modifier onlyVerified() {
-        require(identity.isVerified(msg.sender), "Not verified");
-        _;
+    function setIdentityRegistry(address _identityRegistry) external onlyOwner {
+        identityRegistry = IdentityRegistry(_identityRegistry);
     }
 
-    modifier notPaused() {
-        require(!paused, "Contract paused");
-        require(!frozen[msg.sender], "Account frozen");
-        _;
-    }
-
-    function pause(bool _state) external {
-        require(msg.sender == admin, "Only admin");
-        paused = _state;
-    }
-
-    function freeze(address user, bool _state) external {
-        require(msg.sender == admin, "Only admin");
-        frozen[user] = _state;
-    }
-
-    function mintInvoice(address payer, uint256 amount, uint256 dueDate) external onlyVerified notPaused {
-        uint256 id = invoices.length;
-        invoices.push(Invoice(amount, msg.sender, payer, dueDate, false));
-        invoiceOwner[id] = msg.sender;
-        ownedInvoices[msg.sender].push(id);
-        emit InvoiceMinted(id, msg.sender, payer, amount, dueDate);
-    }
-
-    function transferInvoice(uint256 id, address to) external onlyVerified notPaused {
-        require(invoiceOwner[id] == msg.sender, "Not owner");
-        require(identity.isVerified(to), "To not verified");
+    /// @notice Mints a new Invoice Token
+    /// @dev Only verified users can mint
+    function mintInvoice(
+        address payer, 
+        uint256 amount, 
+        uint256 dueDate,
+        string memory uri
+    ) external {
+        require(identityRegistry.isVerified(msg.sender), "InvoiceToken: Issuer not verified");
         
-        invoiceOwner[id] = to;
-        ownedInvoices[to].push(id);
-        emit Transfer(id, msg.sender, to);
+        uint256 tokenId = _nextTokenId++;
+        
+        invoices[tokenId] = Invoice({
+            amount: amount,
+            issuer: msg.sender,
+            payer: payer,
+            dueDate: dueDate,
+            paid: false,
+            exists: true
+        });
+
+        _mint(msg.sender, tokenId);
+        _setTokenURI(tokenId, uri);
+
+        emit InvoiceMinted(tokenId, msg.sender, payer, amount, dueDate);
     }
 
-    function markPaid(uint256 id) external onlyVerified notPaused {
-        require(invoiceOwner[id] == msg.sender, "Not owner");
-        invoices[id].paid = true;
-        emit InvoicePaid(id, invoices[id].amount);
+    /// @notice Marks an invoice as paid
+    function markPaid(uint256 tokenId) external {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "InvoiceToken: Not owner or approved");
+        require(invoices[tokenId].exists, "InvoiceToken: Non-existent invoice");
+        
+        invoices[tokenId].paid = true;
+        emit InvoicePaid(tokenId, invoices[tokenId].amount);
     }
 
-    function recoverInvoice(uint256 id, address newOwner) external {
-        require(msg.sender == admin, "Only admin");
-        invoiceOwner[id] = newOwner;
+    /// @notice Getter for invoice details
+    function getInvoice(uint256 tokenId) external view returns (Invoice memory) {
+        require(invoices[tokenId].exists, "InvoiceToken: Non-existent invoice");
+        return invoices[tokenId];
     }
 
-    function invoiceInfo(uint256 id) external view returns (Invoice memory, address owner) {
-        return (invoices[id], invoiceOwner[id]);
-    }
-
-    function getInvoiceCount() external view returns (uint256) {
-        return invoices.length;
+    /// @notice Hook to enforce Identity checks on transfers (ERC-3643 Style)
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 /* tokenId */,
+        uint256 /* batchSize */
+    ) internal view override {
+        // Skip check for minting (from == 0) if we check in mint function, 
+        // but let's enforce that 'to' must be verified for all transfers including mints/burns
+        if (to != address(0)) {
+            require(identityRegistry.isVerified(to), "InvoiceToken: Transfer to unverified address");
+        }
+        
+        // Optionally check 'from' if not minting
+        if (from != address(0)) {
+             // In strictly permissioned systems, sender might also need to be verified or compliant
+             require(identityRegistry.isVerified(from), "InvoiceToken: Transfer from unverified address");
+        }
     }
 }
-
-
-

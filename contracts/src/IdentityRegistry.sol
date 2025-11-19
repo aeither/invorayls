@@ -1,19 +1,39 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-/// Identity Registry (simple: address => verified)
+/// @title Identity Registry (Simplified ERC-3643 Style)
+/// @notice A simplified identity registry for permissioned tokens.
 contract IdentityRegistry {
-    mapping(address => bool) public verified;
+    mapping(address => bool) private _verified;
+    address public admin;
 
-    function register(address user) external {
-        // You'd want real admin logic, but demo for hackathon
-        verified[user] = true;
+    event IdentityVerified(address indexed user);
+    event IdentityRemoved(address indexed user);
+
+    constructor() {
+        admin = msg.sender;
     }
 
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "IdentityRegistry: only admin");
+        _;
+    }
+
+    /// @notice Registers a user as verified (Simulating KYC/AML check)
+    function register(address user) external onlyAdmin {
+        _verified[user] = true;
+        emit IdentityVerified(user);
+    }
+
+    /// @notice Removes a user's verification
+    function remove(address user) external onlyAdmin {
+        _verified[user] = false;
+        emit IdentityRemoved(user);
+    }
+
+    /// @notice Checks if a user is verified
+    /// @dev This matches the ISecurityToken registry check style
     function isVerified(address user) external view returns (bool) {
-        return verified[user];
+        return _verified[user];
     }
 }
-
-
-

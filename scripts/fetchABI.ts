@@ -13,7 +13,7 @@ const DEPLOYMENT_CONFIG_PATH = join(__dirname, 'deployment-addresses.json');
 const ENV_FILE_PATH = join(__dirname, '../.env.local');
 
 // Contract names we care about for the invoice system
-const TARGET_CONTRACTS = ['IdentityRegistry', 'InvoiceToken', 'InvoiceVault'];
+const TARGET_CONTRACTS = ['IdentityRegistry', 'InvoiceToken', 'InvoiceVault', 'MockUSDC'];
 
 interface DeploymentAddresses {
   [contractName: string]: string;

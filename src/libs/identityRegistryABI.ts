@@ -1,6 +1,24 @@
 export const identityRegistryABI =
 [
   {
+    "type": "constructor",
+    "inputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "admin",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
     "type": "function",
     "name": "isVerified",
     "inputs": [
@@ -34,21 +52,41 @@ export const identityRegistryABI =
   },
   {
     "type": "function",
-    "name": "verified",
+    "name": "remove",
     "inputs": [
       {
-        "name": "",
+        "name": "user",
         "type": "address",
         "internalType": "address"
       }
     ],
-    "outputs": [
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "IdentityRemoved",
+    "inputs": [
       {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
       }
     ],
-    "stateMutability": "view"
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "IdentityVerified",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
   }
 ] as const;
