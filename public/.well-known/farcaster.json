@@ -1,0 +1,42 @@
+{
+  "frame": {
+    "name": "BunnyGame",
+    "version": "1",
+    "iconUrl": "https://realmind-celo.dailywiser.xyz/icon.png",
+    "homeUrl": "https://realmind-celo.dailywiser.xyz",
+    "imageUrl": "https://realmind-celo.dailywiser.xyz/icon.png",
+    "splashImageUrl": "https://realmind-celo.dailywiser.xyz/icon.png",
+    "splashBackgroundColor": "#FFC117",
+    "webhookUrl": "https://realmind-celo.dailywiser.xyz/api/webhook",
+    "subtitle": "Care and Earn",
+    "description": "Gamified bunny care system where users perform actions to increase happiness and earn egg rewards on Hyperion Testnet.",
+    "primaryCategory": "games",
+    "screenshotUrls": [
+      "https://realmind-celo.dailywiser.xyz/icon.png"
+    ],
+    "tags": [
+      "game",
+      "bunny",
+      "gamification",
+      "blockchain",
+      "rewards",
+      "nft"
+    ],
+    "heroImageUrl": "https://realmind-celo.netlify.app/quiz-preview.jpeg",
+    "tagline": "Care and Earn",
+    "ogTitle": "BunnyGame - Care and Earn",
+    "ogDescription": "Care for your bunny, increase happiness, and earn egg rewards. Merge eggs to create MegaEggs!",
+    "ogImageUrl": "https://realmind-celo.dailywiser.xyz/icon.png",
+    "noindex": false
+  },
+  "accountAssociation": {
+    "header": "eyJmaWQiOjIxNjM4MywidHlwZSI6ImF1dGgiLCJrZXkiOiIweENhMDU3RDcxRWY1NDE5RDZDNzhlNTI3MTU2NUFDZEMwMzAxZjA0ODAifQ",
+    "payload": "eyJkb21haW4iOiJyZWFsbWluZC1jZWxvLmRhaWx5d2lzZXIueHl6In0",
+    "signature": "dwYlcgDFFgLviJxyu++Xxo+fm4zTofJysH4N2uowrUh2jGNov1VitKJr2xYaP+nsILjhGqeYYbBdul+erut8Bhs="
+  },
+  "baseBuilder": {
+    "allowedAddresses": [
+      "0x1eA091521DC4A2035a586995f9fB7ca7b0F646ad"
+    ]
+  }
+}
