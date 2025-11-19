@@ -1,4 +1,4 @@
-import { formatEther } from 'viem';
+import { formatEther, formatUnits } from 'viem';
 import { motion } from 'framer-motion';
 import { TrendingUp, Wallet, PieChart, Info } from 'lucide-react';
 
@@ -13,10 +13,10 @@ export default function VaultStatsCard({
   userBalance,
   sharePrice,
 }: VaultStatsCardProps) {
-  const totalAssetsFormatted = parseFloat(formatEther(totalAssets));
-  const userBalanceFormatted = parseFloat(formatEther(userBalance));
+  const totalAssetsFormatted = parseFloat(formatUnits(totalAssets, 6));
+  const userBalanceFormatted = parseFloat(formatUnits(userBalance, 6));
   const sharePriceFormatted = sharePrice
-    ? parseFloat(formatEther(sharePrice))
+    ? parseFloat(formatUnits(sharePrice, 6))
     : 1;
 
   return (

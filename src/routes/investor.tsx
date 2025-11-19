@@ -27,6 +27,7 @@ import {
 import BottomNavigation from '../components/BottomNavigation';
 import VerificationBanner from '../components/VerificationBanner';
 import VaultStatsCard from '../components/VaultStatsCard';
+import RiskProfileSection from '../components/RiskProfileSection';
 import { contracts } from '../libs/contracts';
 import { SUPPORTED_CHAIN } from '../libs/supportedChains';
 
@@ -263,6 +264,11 @@ function InvestorDashboard() {
           />
         )}
 
+        {/* Risk Profile Selector */}
+        {isVerified && (
+          <RiskProfileSection />
+        )}
+
         {/* Tabs */}
         {isVerified && (
           <div className="flex gap-2 mb-6 bg-white/5 p-1 rounded-xl backdrop-blur-md border border-white/10">
@@ -271,8 +277,8 @@ function InvestorDashboard() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-3 px-4 rounded-lg font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === tab
-                    ? 'bg-gradient-to-r from-purple-500/80 to-blue-500/80 text-white shadow-lg'
-                    : 'text-blue-200/60 hover:bg-white/5 hover:text-white'
+                  ? 'bg-gradient-to-r from-purple-500/80 to-blue-500/80 text-white shadow-lg'
+                  : 'text-blue-200/60 hover:bg-white/5 hover:text-white'
                   }`}
               >
                 {tab === 'invest' ? <><Wallet size={16} /> Invest</> : <><PieChart size={16} /> Portfolio</>}
@@ -295,8 +301,8 @@ function InvestorDashboard() {
                 onClick={() => setShowDepositForm(!showDepositForm)}
                 disabled={isPending || isConfirming}
                 className={`w-full p-4 mb-6 rounded-xl flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-all duration-300 ${showDepositForm
-                    ? 'bg-white/5 text-white/60 hover:bg-white/10 border border-white/10'
-                    : 'glass-button-primary hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
+                  ? 'bg-white/5 text-white/60 hover:bg-white/10 border border-white/10'
+                  : 'glass-button-primary hover:shadow-[0_0_30px_rgba(168,85,247,0.4)]'
                   }`}
               >
                 {showDepositForm ? <><X size={20} /> Cancel</> : <><Plus size={20} /> Deposit USDC</>}
@@ -347,8 +353,8 @@ function InvestorDashboard() {
                             onClick={handleApprove}
                             disabled={isPending || isConfirming || !depositAmount}
                             className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${isPending || isConfirming || !depositAmount
-                                ? 'bg-white/5 text-white/40 cursor-not-allowed'
-                                : 'glass-button hover:bg-yellow-500/20 hover:border-yellow-500/50 hover:text-yellow-200'
+                              ? 'bg-white/5 text-white/40 cursor-not-allowed'
+                              : 'glass-button hover:bg-yellow-500/20 hover:border-yellow-500/50 hover:text-yellow-200'
                               }`}
                           >
                             {pendingAction === 'approve' ? (
@@ -362,8 +368,8 @@ function InvestorDashboard() {
                             type="submit"
                             disabled={isPending || isConfirming || !depositAmount}
                             className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${isPending || isConfirming || !depositAmount
-                                ? 'bg-white/5 text-white/40 cursor-not-allowed'
-                                : 'glass-button-primary'
+                              ? 'bg-white/5 text-white/40 cursor-not-allowed'
+                              : 'glass-button-primary'
                               }`}
                           >
                             {pendingAction === 'deposit' ? (
