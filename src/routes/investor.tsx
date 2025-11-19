@@ -351,7 +351,7 @@ function InvestorDashboard() {
                       <div className="mb-6 p-4 bg-blue-500/10 border border-blue-400/20 rounded-xl flex justify-between items-center">
                         <span className="text-blue-200/80 text-sm">Your USDC Balance:</span>
                         <span className="text-white font-mono font-bold text-lg">
-                          ${usdcBal.toFixed(2)}
+                          ${usdcBal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
 

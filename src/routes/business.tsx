@@ -11,12 +11,19 @@ import {
   useSwitchChain,
 } from 'wagmi';
 import { parseUnits } from 'viem';
-import { FileText, Plus, X, Loader2, Wallet, AlertTriangle, ArrowRight } from 'lucide-react';
+import { FileText, Plus, X, Loader2, Wallet, AlertTriangle, ArrowRight, Upload, Sparkles, CheckCircle2 } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 import VerificationBanner from '../components/VerificationBanner';
 import InvoiceCard from '../components/InvoiceCard';
 import { contracts } from '../libs/contracts';
 import { SUPPORTED_CHAIN } from '../libs/supportedChains';
+
+interface AIRiskEvaluation {
+  score: string;
+  confidence: number;
+  yieldRate: number;
+  factors: { label: string; value: string }[];
+}
 
 function BusinessDashboard() {
   const { address, isConnected } = useAccount();
@@ -29,6 +36,9 @@ function BusinessDashboard() {
   const [dueDate, setDueDate] = useState('');
   const [description, setDescription] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [aiAnalyzing, setAiAnalyzing] = useState(false);
+  const [aiEvaluation, setAiEvaluation] = useState<AIRiskEvaluation | null>(null);
 
   // Check if user is verified
   const { data: isVerified, refetch: refetchVerified } = useReadContract({
@@ -90,6 +100,72 @@ function BusinessDashboard() {
     setAmount('');
     setDueDate('');
     setDescription('');
+    setUploadedFile(null);
+    setAiEvaluation(null);
+  };
+
+  // Mock AI Analysis Function
+  const performAIAnalysis = async (file: File, amount: string, dueDate: string): Promise<AIRiskEvaluation> => {
+    // Simulate AI processing time (2-4 seconds)
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
+
+    // Generate mock risk evaluation based on file name, amount, and due date
+    const hash = file.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const amountNum = parseFloat(amount) || 1000;
+    const daysUntilDue = Math.floor((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
+    const riskScores = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C'];
+    const scoreIndex = Math.abs((hash + Math.floor(amountNum)) % riskScores.length);
+    const score = riskScores[scoreIndex];
+
+    // Calculate yield rate based on risk score
+    let yieldRate: number;
+    if (score.startsWith('A')) {
+      yieldRate = 5 + Math.random() * 2; // 5-7%
+    } else if (score.startsWith('B')) {
+      yieldRate = 8 + Math.random() * 3; // 8-11%
+    } else {
+      yieldRate = 12 + Math.random() * 4; // 12-16%
+    }
+
+    const confidence = 85 + Math.random() * 10; // 85-95% confidence
+
+    // Generate risk factors based on the analysis
+    const factors = [
+      { label: 'Payment History', value: ['Excellent', 'Good', 'Fair', 'Limited'][Math.abs(hash % 4)] },
+      { label: 'Invoice Amount', value: amountNum > 10000 ? 'High Value' : amountNum > 5000 ? 'Medium Value' : 'Standard' },
+      { label: 'Payment Terms', value: daysUntilDue > 60 ? 'Long Term' : daysUntilDue > 30 ? 'Standard' : 'Short Term' },
+      { label: 'Industry Risk', value: ['Low', 'Moderate', 'Medium'][Math.abs(hash % 3)] },
+    ];
+
+    return {
+      score,
+      confidence: Math.round(confidence * 10) / 10,
+      yieldRate: Math.round(yieldRate * 10) / 10,
+      factors,
+    };
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type (PDF, PNG, JPG)
+      const validTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+      if (!validTypes.includes(file.type)) {
+        toast.error('Please upload a PDF or image file (PNG, JPG)');
+        return;
+      }
+
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('File size must be less than 10MB');
+        return;
+      }
+
+      setUploadedFile(file);
+      setAiEvaluation(null); // Reset evaluation when new file is uploaded
+      toast.success(`📄 ${file.name} uploaded`);
+    }
   };
 
   const handleMintInvoice = async (e: React.FormEvent) => {
@@ -110,16 +186,35 @@ function BusinessDashboard() {
       return;
     }
 
+    if (!uploadedFile) {
+      toast.error('Please upload an invoice file');
+      return;
+    }
+
     try {
       setPendingAction('mint');
+      setAiAnalyzing(true);
+
+      // Perform AI Analysis
+      toast.info('🤖 Analyzing invoice with AI...');
+      const evaluation = await performAIAnalysis(uploadedFile, amount, dueDate);
+      setAiEvaluation(evaluation);
+
+      toast.success(`✅ AI Risk Score: ${evaluation.score} | Yield: ${evaluation.yieldRate}%`);
+
+      // Create Invoice Token
       const amountInWei = parseUnits(amount, 6); // USDC has 6 decimals
       const dueDateTimestamp = Math.floor(new Date(dueDate).getTime() / 1000);
 
-      // Create metadata URI (in a real app, this would be uploaded to IPFS)
+      // Create metadata URI with AI evaluation (in a real app, this would be uploaded to IPFS)
       const metadata = {
         description: description || 'Invoice',
         amount,
         dueDate,
+        fileName: uploadedFile.name,
+        aiRiskScore: evaluation.score,
+        aiYieldRate: evaluation.yieldRate,
+        aiConfidence: evaluation.confidence,
       };
       const metadataUri = `data:application/json,${encodeURIComponent(
         JSON.stringify(metadata)
@@ -138,6 +233,8 @@ function BusinessDashboard() {
         error?.shortMessage || error?.message || 'Transaction failed';
       toast.error(errorMsg);
       setPendingAction(null);
+    } finally {
+      setAiAnalyzing(false);
     }
   };
 
@@ -257,6 +354,49 @@ function BusinessDashboard() {
                 </h3>
 
                 <form onSubmit={handleMintInvoice} className="space-y-6">
+                  {/* File Upload */}
+                  <div>
+                    <label className="block text-xs font-bold text-blue-200/70 uppercase tracking-wider mb-2">
+                      Upload Invoice File *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        onChange={handleFileUpload}
+                        accept=".pdf,.png,.jpg,.jpeg"
+                        required
+                        className="hidden"
+                        id="invoice-file-upload"
+                      />
+                      <label
+                        htmlFor="invoice-file-upload"
+                        className="w-full bg-black/20 border-2 border-dashed border-white/10 hover:border-cyan-400/50 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all group"
+                      >
+                        {uploadedFile ? (
+                          <div className="flex items-center gap-3 text-cyan-400">
+                            <CheckCircle2 size={24} />
+                            <div className="text-left">
+                              <p className="font-medium">{uploadedFile.name}</p>
+                              <p className="text-xs text-blue-200/50">
+                                {(uploadedFile.size / 1024).toFixed(1)} KB
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="text-white/30 group-hover:text-cyan-400/70 transition-colors mb-2" size={32} />
+                            <p className="text-white/60 text-sm">
+                              Click to upload or drag and drop
+                            </p>
+                            <p className="text-white/30 text-xs mt-1">
+                              PDF, PNG, or JPG (max 10MB)
+                            </p>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold text-blue-200/70 uppercase tracking-wider mb-2">
                       Payer Address *
@@ -315,16 +455,28 @@ function BusinessDashboard() {
 
                   <button
                     type="submit"
-                    disabled={isPending || isConfirming}
-                    className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${isPending || isConfirming
-                      ? 'bg-white/5 text-white/40 cursor-not-allowed'
-                      : 'glass-button-primary hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]'
-                      }`}
+                    disabled={isPending || isConfirming || aiAnalyzing}
+                    className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                      isPending || isConfirming || aiAnalyzing
+                        ? 'bg-white/5 text-white/40 cursor-not-allowed'
+                        : 'glass-button-primary hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]'
+                    }`}
                   >
-                    {isPending || isConfirming ? (
-                      <><Loader2 className="animate-spin" size={20} /> Creating...</>
+                    {aiAnalyzing ? (
+                      <>
+                        <Sparkles className="animate-spin" size={20} />
+                        <span>Analyzing with AI...</span>
+                      </>
+                    ) : isPending || isConfirming ? (
+                      <>
+                        <Loader2 className="animate-spin" size={20} />
+                        <span>Creating Invoice Token...</span>
+                      </>
                     ) : (
-                      <><Plus size={20} /> Create Invoice Token</>
+                      <>
+                        <Plus size={20} />
+                        <span>Create Invoice Token</span>
+                      </>
                     )}
                   </button>
                 </form>
