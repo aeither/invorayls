@@ -1,5 +1,6 @@
 import { formatEther } from 'viem';
 import { motion } from 'framer-motion';
+import { FileText, Calendar, User, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 
 interface Invoice {
   amount: bigint;
@@ -36,148 +37,70 @@ export default function InvoiceCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{
-        background: 'hsl(var(--celo-white))',
-        border: '3px solid hsl(var(--celo-black))',
-        padding: '1.25rem',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
+      className="glass-panel p-6 relative overflow-hidden group hover:border-cyan-400/30 transition-all duration-300"
     >
       {/* Status Badge */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '0.75rem',
-          right: '0.75rem',
-          padding: '0.25rem 0.75rem',
-          fontSize: '0.7rem',
-          fontWeight: 'bold',
-          textTransform: 'uppercase',
-          border: '2px solid hsl(var(--celo-black))',
-          background: invoice.paid
-            ? 'hsl(var(--celo-green))'
-            : isOverdue
-            ? 'hsl(var(--celo-red))'
-            : 'hsl(var(--celo-yellow))',
-          color: invoice.paid || isOverdue ? 'white' : 'hsl(var(--celo-black))',
-        }}
-      >
-        {invoice.paid ? '✓ Paid' : isOverdue ? '! Overdue' : '○ Pending'}
+      <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 border ${invoice.paid
+          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+          : isOverdue
+            ? 'bg-red-500/10 text-red-400 border-red-500/20'
+            : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+        }`}>
+        {invoice.paid ? <CheckCircle2 size={12} /> : isOverdue ? <AlertCircle size={12} /> : <Clock size={12} />}
+        {invoice.paid ? 'Paid' : isOverdue ? 'Overdue' : 'Pending'}
       </div>
 
       {/* Token ID */}
-      <div
-        style={{
-          fontSize: '0.75rem',
-          color: 'hsl(var(--celo-brown))',
-          marginBottom: '0.5rem',
-          fontWeight: 600,
-        }}
-      >
+      <div className="flex items-center gap-2 text-xs font-medium text-blue-200/50 mb-2 uppercase tracking-wider">
+        <FileText size={12} />
         Invoice #{tokenId}
       </div>
 
       {/* Amount */}
-      <div style={{ marginBottom: '1rem' }}>
-        <div
-          style={{
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            color: 'hsl(var(--celo-black))',
-          }}
-        >
+      <div className="mb-6">
+        <div className="text-3xl font-bold text-white mb-1 tracking-tight">
           ${amount.toFixed(2)}
         </div>
-        <div
-          style={{
-            fontSize: '0.75rem',
-            color: 'hsl(var(--celo-brown))',
-          }}
-        >
-          USDC
+        <div className="text-xs font-medium text-blue-200/50 uppercase tracking-wider">
+          USDC Amount
         </div>
       </div>
 
       {/* Details Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '0.75rem',
-          marginBottom: '1rem',
-        }}
-      >
-        <div>
-          <div
-            style={{
-              fontSize: '0.65rem',
-              color: 'hsl(var(--celo-brown))',
-              marginBottom: '0.25rem',
-              textTransform: 'uppercase',
-            }}
-          >
-            Due Date
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-200/50 uppercase tracking-wider mb-1">
+            <Calendar size={10} /> Due Date
           </div>
-          <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+          <div className="text-sm font-medium text-white mb-1">
             {dueDate.toLocaleDateString()}
           </div>
-          <div
-            style={{
-              fontSize: '0.7rem',
-              color: isOverdue ? 'hsl(var(--celo-red))' : 'hsl(var(--celo-brown))',
-            }}
-          >
+          <div className={`text-[10px] font-medium ${isOverdue ? 'text-red-400' : 'text-blue-200/70'
+            }`}>
             {invoice.paid
               ? 'Completed'
               : isOverdue
-              ? `${Math.abs(daysUntilDue)} days overdue`
-              : `${daysUntilDue} days left`}
+                ? `${Math.abs(daysUntilDue)} days overdue`
+                : `${daysUntilDue} days left`}
           </div>
         </div>
 
-        <div>
-          <div
-            style={{
-              fontSize: '0.65rem',
-              color: 'hsl(var(--celo-brown))',
-              marginBottom: '0.25rem',
-              textTransform: 'uppercase',
-            }}
-          >
-            Payer
+        <div className="p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-200/50 uppercase tracking-wider mb-1">
+            <User size={10} /> Payer
           </div>
-          <div
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              fontFamily: 'monospace',
-            }}
-          >
+          <div className="text-sm font-medium text-white font-mono">
             {invoice.payer.slice(0, 6)}...{invoice.payer.slice(-4)}
           </div>
         </div>
       </div>
 
       {showIssuer && (
-        <div style={{ marginBottom: '1rem' }}>
-          <div
-            style={{
-              fontSize: '0.65rem',
-              color: 'hsl(var(--celo-brown))',
-              marginBottom: '0.25rem',
-              textTransform: 'uppercase',
-            }}
-          >
-            Issuer
+        <div className="mb-6 p-3 rounded-xl bg-white/5 border border-white/5">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-200/50 uppercase tracking-wider mb-1">
+            <User size={10} /> Issuer
           </div>
-          <div
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              fontFamily: 'monospace',
-            }}
-          >
+          <div className="text-sm font-medium text-white font-mono">
             {invoice.issuer.slice(0, 6)}...{invoice.issuer.slice(-4)}
           </div>
         </div>
@@ -188,19 +111,10 @@ export default function InvoiceCard({
         <button
           onClick={() => onAction(tokenId)}
           disabled={actionDisabled}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            background: actionDisabled
-              ? 'hsl(var(--celo-tan-2))'
-              : 'hsl(var(--celo-purple))',
-            color: actionDisabled ? 'hsl(var(--celo-brown))' : 'white',
-            border: '2px solid hsl(var(--celo-black))',
-            fontWeight: 'bold',
-            fontSize: '0.9rem',
-            cursor: actionDisabled ? 'not-allowed' : 'pointer',
-            textTransform: 'uppercase',
-          }}
+          className={`w-full py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-300 ${actionDisabled
+              ? 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
+              : 'glass-button-primary hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]'
+            }`}
         >
           {actionLabel}
         </button>

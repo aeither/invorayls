@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import {
@@ -11,6 +11,7 @@ import {
   useSwitchChain,
 } from 'wagmi';
 import { parseUnits } from 'viem';
+import { FileText, Plus, X, Loader2, Wallet, AlertTriangle, ArrowRight } from 'lucide-react';
 import BottomNavigation from '../components/BottomNavigation';
 import VerificationBanner from '../components/VerificationBanner';
 import InvoiceCard from '../components/InvoiceCard';
@@ -49,7 +50,6 @@ function BusinessDashboard() {
 
   // Fetch user's invoices
   const [invoiceIds, setInvoiceIds] = useState<number[]>([]);
-  const [invoices, setInvoices] = useState<any[]>([]);
 
   // Contract writes
   const { writeContract, data: hash, isPending } = useWriteContract();
@@ -165,27 +165,13 @@ function BusinessDashboard() {
 
   if (!isConnected) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          paddingBottom: '70px',
-          background: 'hsl(var(--background))',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '600px',
-            margin: '0 auto',
-            padding: '2rem',
-            paddingTop: 'clamp(4rem, 15vw, 6rem)',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📄</div>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-            Connect Wallet
-          </h2>
-          <p style={{ color: '#6b7280' }}>
+      <div className="min-h-screen pb-24 flex flex-col items-center justify-center p-4">
+        <div className="glass-panel p-8 max-w-md w-full text-center">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.5)] mb-6">
+            <Wallet className="text-white w-10 h-10" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">Connect Wallet</h2>
+          <p className="text-blue-100/60 mb-6">
             Connect your wallet to access the Business Dashboard
           </p>
         </div>
@@ -196,51 +182,21 @@ function BusinessDashboard() {
 
   if (!isCorrectNetwork) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          paddingBottom: '70px',
-          background: 'hsl(var(--background))',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '600px',
-            margin: '0 auto',
-            padding: '2rem',
-            paddingTop: '100px',
-            textAlign: 'center',
-          }}
-        >
-          <div
-            style={{
-              background: '#fef2f2',
-              border: '3px solid #ef4444',
-              padding: '2rem',
-            }}
-          >
-            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⚠️</div>
-            <h2 style={{ color: '#991b1b', marginBottom: '1rem' }}>
-              Wrong Network
-            </h2>
-            <p style={{ color: '#7f1d1d', marginBottom: '1.5rem' }}>
-              Please switch to <strong>{SUPPORTED_CHAIN.name}</strong>
-            </p>
-            <button
-              onClick={() => switchChain({ chainId: SUPPORTED_CHAIN.id })}
-              style={{
-                backgroundColor: '#58CC02',
-                color: '#ffffff',
-                border: 'none',
-                padding: '0.75rem 1.5rem',
-                fontSize: '1rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Switch to {SUPPORTED_CHAIN.name}
-            </button>
+      <div className="min-h-screen pb-24 flex flex-col items-center justify-center p-4">
+        <div className="glass-panel p-8 max-w-md w-full text-center border-red-500/30 bg-red-500/10">
+          <div className="w-20 h-20 mx-auto bg-red-500/20 rounded-full flex items-center justify-center mb-6">
+            <AlertTriangle className="text-red-400 w-10 h-10" />
           </div>
+          <h2 className="text-2xl font-bold text-red-400 mb-2">Wrong Network</h2>
+          <p className="text-red-200/70 mb-6">
+            Please switch to <strong>{SUPPORTED_CHAIN.name}</strong>
+          </p>
+          <button
+            onClick={() => switchChain({ chainId: SUPPORTED_CHAIN.id })}
+            className="glass-button w-full py-3 bg-red-500/20 hover:bg-red-500/30 border-red-500/30 text-red-100"
+          >
+            Switch to {SUPPORTED_CHAIN.name}
+          </button>
         </div>
         <BottomNavigation />
       </div>
@@ -251,29 +207,16 @@ function BusinessDashboard() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ background: 'hsl(var(--background))', minHeight: '100vh' }}
+      className="min-h-screen pb-24"
     >
-      <div
-        style={{
-          maxWidth: '900px',
-          margin: '0 auto',
-          padding: '1rem',
-          paddingBottom: '100px',
-        }}
-      >
+      <div className="max-w-5xl mx-auto px-4">
         {/* Header */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <h1
-            style={{
-              fontSize: '2rem',
-              margin: 0,
-              marginBottom: '0.5rem',
-              fontWeight: 'bold',
-            }}
-          >
-            📄 Business Dashboard
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+            <FileText className="text-cyan-400" />
+            Business Dashboard
           </h1>
-          <p style={{ color: 'hsl(var(--celo-brown))', margin: 0 }}>
+          <p className="text-blue-100/60">
             Tokenize and manage your invoices
           </p>
         </div>
@@ -289,208 +232,120 @@ function BusinessDashboard() {
           <button
             onClick={() => setShowForm(!showForm)}
             disabled={isPending || isConfirming}
-            style={{
-              width: '100%',
-              padding: '1rem',
-              background: 'hsl(var(--celo-purple))',
-              color: 'white',
-              border: '3px solid hsl(var(--celo-black))',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              marginBottom: '1.5rem',
-              textTransform: 'uppercase',
-            }}
+            className={`w-full p-4 mb-6 rounded-xl flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-all duration-300 ${showForm
+              ? 'bg-white/5 text-white/60 hover:bg-white/10 border border-white/10'
+              : 'glass-button-primary hover:shadow-[0_0_30px_rgba(6,182,212,0.4)]'
+              }`}
           >
-            {showForm ? '✕ Cancel' : '+ Create New Invoice'}
+            {showForm ? <><X size={20} /> Cancel</> : <><Plus size={20} /> Create New Invoice</>}
           </button>
         )}
 
         {/* Invoice Creation Form */}
-        {showForm && isVerified && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            style={{
-              background: 'hsl(var(--celo-white))',
-              border: '3px solid hsl(var(--celo-black))',
-              padding: '1.5rem',
-              marginBottom: '1.5rem',
-            }}
-          >
-            <h3
-              style={{
-                margin: 0,
-                marginBottom: '1rem',
-                fontSize: '1.25rem',
-                fontWeight: 'bold',
-              }}
+        <AnimatePresence>
+          {showForm && isVerified && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+              animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              className="glass-panel overflow-hidden"
             >
-              Tokenize New Invoice
-            </h3>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-cyan-400 rounded-full" />
+                  Tokenize New Invoice
+                </h3>
 
-            <form onSubmit={handleMintInvoice}>
-              <div style={{ marginBottom: '1rem' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 'bold',
-                    marginBottom: '0.5rem',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Payer Address *
-                </label>
-                <input
-                  type="text"
-                  value={payerAddress}
-                  onChange={(e) => setPayerAddress(e.target.value)}
-                  placeholder="0x..."
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '2px solid hsl(var(--celo-black))',
-                    fontSize: '1rem',
-                    fontFamily: 'monospace',
-                  }}
-                />
+                <form onSubmit={handleMintInvoice} className="space-y-6">
+                  <div>
+                    <label className="block text-xs font-bold text-blue-200/70 uppercase tracking-wider mb-2">
+                      Payer Address *
+                    </label>
+                    <input
+                      type="text"
+                      value={payerAddress}
+                      onChange={(e) => setPayerAddress(e.target.value)}
+                      placeholder="0x..."
+                      required
+                      className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white placeholder-white/20 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/50 transition-all font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-blue-200/70 uppercase tracking-wider mb-2">
+                      Amount (USDC) *
+                    </label>
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="1000"
+                      step="0.01"
+                      min="0"
+                      required
+                      className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white placeholder-white/20 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/50 transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-blue-200/70 uppercase tracking-wider mb-2">
+                      Due Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      required
+                      className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white placeholder-white/20 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/50 transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-blue-200/70 uppercase tracking-wider mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Invoice description..."
+                      rows={3}
+                      className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white placeholder-white/20 focus:outline-none focus:border-cyan-400/50 focus:ring-1 focus:ring-cyan-400/50 transition-all resize-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isPending || isConfirming}
+                    className={`w-full py-4 rounded-xl font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${isPending || isConfirming
+                      ? 'bg-white/5 text-white/40 cursor-not-allowed'
+                      : 'glass-button-primary hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]'
+                      }`}
+                  >
+                    {isPending || isConfirming ? (
+                      <><Loader2 className="animate-spin" size={20} /> Creating...</>
+                    ) : (
+                      <><Plus size={20} /> Create Invoice Token</>
+                    )}
+                  </button>
+                </form>
               </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 'bold',
-                    marginBottom: '0.5rem',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Amount (USDC) *
-                </label>
-                <input
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="1000"
-                  step="0.01"
-                  min="0"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '2px solid hsl(var(--celo-black))',
-                    fontSize: '1rem',
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 'bold',
-                    marginBottom: '0.5rem',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Due Date *
-                </label>
-                <input
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '2px solid hsl(var(--celo-black))',
-                    fontSize: '1rem',
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 'bold',
-                    marginBottom: '0.5rem',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Description
-                </label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Invoice description..."
-                  rows={3}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '2px solid hsl(var(--celo-black))',
-                    fontSize: '1rem',
-                    fontFamily: 'inherit',
-                    resize: 'vertical',
-                  }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isPending || isConfirming}
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  background:
-                    isPending || isConfirming
-                      ? 'hsl(var(--celo-tan-2))'
-                      : 'hsl(var(--celo-green))',
-                  color:
-                    isPending || isConfirming
-                      ? 'hsl(var(--celo-brown))'
-                      : 'white',
-                  border: '3px solid hsl(var(--celo-black))',
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  cursor:
-                    isPending || isConfirming ? 'not-allowed' : 'pointer',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {isPending || isConfirming
-                  ? '⏳ Creating...'
-                  : '✓ Create Invoice Token'}
-              </button>
-            </form>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Invoices List */}
         <div>
-          <h2
-            style={{
-              fontSize: '1.25rem',
-              marginBottom: '1rem',
-              fontWeight: 'bold',
-            }}
-          >
-            Your Invoices {invoiceCount && `(${invoiceCount.toString()})`}
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            Your Invoices
+            {invoiceCount !== undefined && (
+              <span className="text-sm font-normal text-blue-200/50 bg-white/5 px-2 py-0.5 rounded-full">
+                {invoiceCount.toString()}
+              </span>
+            )}
           </h2>
 
           {invoiceCount && Number(invoiceCount) > 0 ? (
-            <div
-              style={{
-                display: 'grid',
-                gap: '1rem',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {invoiceIds.map((id) => (
                 <InvoiceCardLoader
                   key={id}
@@ -501,16 +356,11 @@ function BusinessDashboard() {
               ))}
             </div>
           ) : (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '3rem 1rem',
-                background: 'hsl(var(--celo-white))',
-                border: '3px solid hsl(var(--celo-black))',
-              }}
-            >
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
-              <p style={{ fontSize: '1rem', color: 'hsl(var(--celo-brown))' }}>
+            <div className="glass-panel p-12 text-center">
+              <div className="w-16 h-16 mx-auto bg-white/5 rounded-full flex items-center justify-center mb-4">
+                <FileText className="text-white/20 w-8 h-8" />
+              </div>
+              <p className="text-blue-100/60">
                 No invoices yet. Create your first invoice to get started!
               </p>
             </div>
@@ -542,15 +392,8 @@ function InvoiceCardLoader({
 
   if (!invoice) {
     return (
-      <div
-        style={{
-          background: 'hsl(var(--celo-tan-2))',
-          border: '2px solid hsl(var(--celo-black))',
-          padding: '1.25rem',
-          textAlign: 'center',
-        }}
-      >
-        Loading...
+      <div className="glass-panel p-6 flex items-center justify-center h-[300px]">
+        <Loader2 className="animate-spin text-cyan-400" size={32} />
       </div>
     );
   }
@@ -560,7 +403,7 @@ function InvoiceCardLoader({
       tokenId={tokenId}
       invoice={invoice as any}
       onAction={invoice.paid ? undefined : onMarkPaid}
-      actionLabel={isMarking ? '⏳ Marking...' : '✓ Mark as Paid'}
+      actionLabel={isMarking ? '⏳ Marking...' : 'Mark as Paid'}
       actionDisabled={invoice.paid || isMarking}
     />
   );

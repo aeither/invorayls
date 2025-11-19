@@ -1,788 +1,179 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;750;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=GT+Alpina:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-#root {
-  max-width: 100vw;
+:root {
+  /* Apple Liquid Glass Palette */
+  --glass-bg-start: 220 40% 10%; /* Deep Blue/Black */
+  --glass-bg-end: 260 30% 15%;   /* Deep Purple/Black */
+  
+  /* Glass Surface Colors */
+  --glass-surface: 220 20% 95%;
+  --glass-surface-dark: 220 30% 10%;
+  
+  /* Accent Colors - Ethereal & Glowing */
+  --accent-cyan: 190 100% 50%;
+  --accent-blue: 210 100% 60%;
+  --accent-purple: 270 80% 70%;
+  --accent-glow: 190 100% 70%;
+
+  /* Text Colors */
+  --text-primary: 220 10% 95%;
+  --text-secondary: 220 10% 70%;
+  --text-muted: 220 10% 50%;
+
+  /* Glass Properties */
+  --glass-border: 255 255 255;
+  --glass-border-opacity: 0.1;
+  --glass-shine-opacity: 0.05;
+  --glass-blur: 20px;
+  
+  /* Semantic Colors */
+  --color-success: 150 100% 40%;
+  --color-warning: 40 100% 50%;
+  --color-error: 0 100% 60%;
+
+  /* Shadcn/Base Mappings for compatibility */
+  --background: var(--glass-bg-start);
+  --foreground: var(--text-primary);
+  --card: var(--glass-surface-dark);
+  --card-foreground: var(--text-primary);
+  --popover: var(--glass-surface-dark);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent-cyan);
+  --primary-foreground: 220 40% 10%;
+  --secondary: var(--accent-blue);
+  --secondary-foreground: 220 40% 10%;
+  --muted: 220 30% 20%;
+  --muted-foreground: var(--text-muted);
+  --accent: var(--accent-purple);
+  --accent-foreground: 220 40% 10%;
+  --destructive: var(--color-error);
+  --destructive-foreground: 220 40% 10%;
+  --border: 220 30% 20%;
+  --input: 220 30% 20%;
+  --ring: var(--accent-cyan);
+  --radius: 1rem;
+}
+
+body {
   margin: 0;
   padding: 0;
-  text-align: left;
-  background-color: hsl(var(--background));
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top left, hsl(var(--glass-bg-start)), hsl(var(--glass-bg-end)));
+  background-attachment: fixed;
+  color: hsl(var(--text-primary));
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-/* Modern Gamified Quiz App Design System - Light Theme with Duolingo-style Green Accent */
-
-@layer base {
-  :root {
-    /* Celo-brand raw, high-contrast palette - BOLD & UNAPOLOGETIC */
-    --celo-yellow: 56 100% 66%; /* #FCFF52 - BRIGHT ENERGY */
-    --celo-green: 86 40% 28%;  /* #4E632A - DEEP FOREST */
-    --celo-purple: 289 100% 6%;  /* #1F002A - DARK POWER */
-    --celo-tan: 32 59% 97%;     /* #FBF6F1 - LIGHT FOUNDATION */
-    --celo-tan-2: 49 25% 86%;   /* #E6E3D5 - NEUTRAL STRUCTURE */
-    --celo-brown: 33 14% 34%;   /* #635949 - INDUSTRIAL TONE */
-    --celo-black: 0 0% 0%;      /* #000000 - PURE CONTRAST */
-    --celo-white: 0 0% 100%;    /* #FFFFFF - CLEAN BASE */
-
-    /* HIGH-ENERGY ACCENT PUNCHES - use sparingly for maximum impact */
-    --celo-pink: 320 76% 80%;   /* #F2A9E7 - ELECTRIC SHOCK */
-    --celo-orange: 24 87% 67%;  /* #F29E5F - BURNING HIGHLIGHT */
-    --celo-lime: 103 65% 78%;   /* #B2EBA1 - NEON PULSE */
-    --celo-blue: 208 79% 77%;   /* #8AC0F9 - DIGITAL GLOW */
-
-    /* ARCHITECTURAL DESIGN TOKENS - raw and structural */
-    --background: 32 72% 96%; /* #FDF7F3 - Celo soft cream */
-    --foreground: var(--celo-black);
-    --card: var(--celo-white);
-    --card-foreground: var(--celo-black);
-    --popover: var(--celo-white);
-    --popover-foreground: var(--celo-black);
-    --primary: var(--celo-yellow);
-    --primary-foreground: var(--celo-black);
-    --secondary: var(--celo-purple);
-    --secondary-foreground: var(--celo-white);
-    --muted: var(--celo-tan-2);
-    --muted-foreground: var(--celo-brown);
-    --accent: var(--celo-green);
-    --accent-foreground: var(--celo-white);
-    --destructive: 0 84% 60%;
-    --destructive-foreground: var(--celo-white);
-    --border: var(--celo-black); /* ALWAYS BLACK - VISIBLE STRUCTURE */
-    --input: var(--celo-white);
-    --ring: var(--celo-purple);
-    --radius: 0px; /* NO SOFTNESS - SHARP RECTANGLES ONLY */
-
-    /* POSTER-LIKE TYPOGRAPHY WEIGHTS */
-    --font-headline: 'GT Alpina', Georgia, serif; /* Architectural headlines */
-    --font-body: 'Inter', 'Helvetica Neue', sans-serif; /* Industrial signage */
-    --font-weight-headline-thin: 300;
-    --font-weight-headline-normal: 400;
-    --font-weight-body-normal: 400;
-    --font-weight-body-heavy: 750; /* For links and tags */
-    --font-weight-body-black: 900; /* For emphasis */
-
-    /* STARK GRADIENTS - hard-edged transitions only */
-    --gradient-hero: linear-gradient(90deg, hsl(var(--celo-yellow)) 0% 40%, hsl(var(--celo-black)) 40% 100%);
-    --gradient-accent: linear-gradient(180deg, hsl(var(--celo-purple)) 0% 50%, hsl(var(--celo-green)) 50% 100%);
-    --gradient-invert: linear-gradient(90deg, hsl(var(--celo-black)) 0% 50%, hsl(var(--celo-yellow)) 50% 100%);
-
-    /* NO SHADOWS - EMPHASIS ON BOLD OUTLINES */
-    --shadow-none: 0 0 0 transparent;
-    --outline-thick: 4px solid hsl(var(--celo-black));
-    --outline-medium: 3px solid hsl(var(--celo-black));
-    --outline-thin: 2px solid hsl(var(--celo-black));
-
-    /* INSTANT TRANSITIONS - no smoothness, raw feedback */
-    --transition-instant: all 0.05s linear;
-    --transition-fast: all 0.1s linear;
-
-    /* COLOR BLOCKS - for sectioning and visual hierarchy */
-    --block-yellow: var(--celo-yellow);
-    --block-green: var(--celo-green);
-    --block-purple: var(--celo-purple);
-    --block-black: var(--celo-black);
-    --block-white: var(--celo-white);
-
-    /* QUIZ SYSTEM - high contrast feedback */
-    --quiz-correct: 103 65% 35%; /* Strong green */
-    --quiz-incorrect: 0 90% 55%; /* Bold red */
-    --quiz-neutral: var(--celo-tan-2);
-    --quiz-selected: var(--celo-yellow);
-    --quiz-hover: var(--celo-purple);
-  }
-}
-
-/* Line clamp utilities for text truncation */
+/* Liquid Glass Utilities */
 @layer utilities {
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+      0 4px 30px rgba(0, 0, 0, 0.1),
+      inset 0 0 20px rgba(255, 255, 255, 0.02);
+    border-radius: 1.5rem;
+    position: relative;
     overflow: hidden;
   }
-}
 
-@layer base {
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-    box-sizing: border-box;
-  }
-
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-body-normal);
-    letter-spacing: 0.005em; /* Tighter, more architectural */
-    text-rendering: geometricPrecision;
-    background-image: none;
-    line-height: 1.4; /* Industrial spacing */
-    margin: 0;
-    padding: 0;
-  }
-
-  /* ARCHITECTURAL TYPOGRAPHY HIERARCHY */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-headline);
-    font-weight: var(--font-weight-headline-thin);
-    letter-spacing: -0.02em; /* Tight headlines */
-    line-height: 1.1;
-    color: hsl(var(--foreground));
-    margin: 0;
-    padding: 0;
-  }
-
-  h1 {
-    font-size: clamp(2.5rem, 8vw, 6rem); /* Oversized */
-    font-weight: var(--font-weight-headline-thin);
-  }
-
-  h2 {
-    font-size: clamp(1.8rem, 5vw, 4rem);
-    font-weight: var(--font-weight-headline-thin);
-  }
-
-  h3 {
-    font-size: clamp(1.4rem, 4vw, 2.5rem);
-    font-weight: var(--font-weight-headline-normal);
-  }
-
-  /* INDUSTRIAL SIGNAGE BODY TEXT */
-  p, span, label {
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-body-normal);
-    line-height: 1.5;
-    color: hsl(var(--foreground));
-    margin: 0;
-  }
-
-  /* HEAVY EMPHASIS ELEMENTS */
-  strong, b {
-    font-weight: var(--font-weight-body-black);
-  }
-
-  /* LINKS AS ARCHITECTURAL ELEMENTS */
-  a {
-    font-weight: var(--font-weight-body-heavy);
-    color: hsl(var(--foreground));
-    text-decoration: none;
-    border-bottom: 2px solid hsl(var(--celo-black));
-    transition: var(--transition-fast);
-  }
-
-  a:hover {
-    background: hsl(var(--celo-yellow));
-    color: hsl(var(--celo-black));
-    border-bottom-color: hsl(var(--celo-black));
-  }
-
-  /* REMOVE ALL ROUNDED CORNERS GLOBALLY */
-  * {
-    border-radius: 0 !important;
-  }
-}
-
-@layer utilities {
-  /* ARCHITECTURAL LAYOUT UTILITIES */
-  .color-block {
-    border: var(--outline-medium);
-    background: hsl(var(--block-white));
-    display: block;
-  }
-
-  .color-block-yellow {
-    background: hsl(var(--block-yellow));
-    color: hsl(var(--celo-black));
-  }
-
-  .color-block-green {
-    background: hsl(var(--block-green));
-    color: hsl(var(--celo-white));
-  }
-
-  .color-block-purple {
-    background: hsl(var(--block-purple));
-    color: hsl(var(--celo-white));
-  }
-
-  .color-block-black {
-    background: hsl(var(--block-black));
-    color: hsl(var(--celo-yellow));
-  }
-
-  /* POSTER-LIKE SECTIONS */
-  .poster-section {
-    min-height: 50vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: var(--outline-thick);
-    background: hsl(var(--background));
-  }
-
-  /* INDUSTRIAL BUTTONS */
-  .btn-industrial {
-    border: var(--outline-medium);
-    padding: 1rem 2rem;
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-body-black);
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    transition: var(--transition-fast);
-    background: hsl(var(--celo-white));
-    color: hsl(var(--celo-black));
-  }
-
-  .btn-industrial:hover {
-    background: hsl(var(--celo-yellow));
-    color: hsl(var(--celo-black));
-  }
-
-  .btn-primary-industrial {
-    background: hsl(var(--celo-yellow));
-    color: hsl(var(--celo-black));
-    border: var(--outline-medium);
-  }
-
-  .btn-primary-industrial:hover {
-    background: hsl(var(--celo-black));
-    color: hsl(var(--celo-yellow));
-  }
-
-  /* STARK GRADIENTS */
-  .bg-gradient-hero {
-    background: var(--gradient-hero);
-  }
-
-  .bg-gradient-accent {
-    background: var(--gradient-accent);
-  }
-
-  .bg-gradient-invert {
-    background: var(--gradient-invert);
-  }
-
-  /* TYPOGRAPHY UTILITIES */
-  .text-headline-thin {
-    font-family: var(--font-headline);
-    font-weight: var(--font-weight-headline-thin);
-    letter-spacing: -0.02em;
-  }
-
-  .text-headline-italic {
-    font-family: var(--font-headline);
-    font-weight: var(--font-weight-headline-thin);
-    font-style: italic;
-    letter-spacing: -0.02em;
-  }
-
-  .text-body-heavy {
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-body-heavy);
-  }
-
-  .text-body-black {
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-body-black);
-  }
-
-  /* QUIZ SYSTEM UTILITIES */
-  .quiz-card-raw {
-    background: hsl(var(--celo-white));
-    border: var(--outline-thick);
-    padding: 2rem;
-  }
-
-  .quiz-option-raw {
-    background: hsl(var(--celo-white));
-    border: var(--outline-medium);
-    padding: 1rem 1.5rem;
-    cursor: pointer;
-    transition: var(--transition-instant);
-    font-weight: var(--font-weight-body-heavy);
-  }
-
-  .quiz-option-raw:hover {
-    background: hsl(var(--celo-yellow));
-    color: hsl(var(--celo-black));
-  }
-
-  .quiz-option-selected {
-    background: hsl(var(--quiz-selected));
-    color: hsl(var(--celo-black));
-  }
-
-  .quiz-option-correct {
-    background: hsl(var(--quiz-correct));
-    color: hsl(var(--celo-white));
-  }
-
-  .quiz-option-incorrect {
-    background: hsl(var(--quiz-incorrect));
-    color: hsl(var(--celo-white));
-  }
-
-  /* ANIMATION CLASSES */
-  .animate-bounce-raw {
-    animation: bounce-raw 0.3s linear;
-  }
-
-  .animate-flash-raw {
-    animation: flash-raw 0.2s linear;
-  }
-
-  .animate-shake-raw {
-    animation: shake-raw 0.4s linear;
-  }
-
-  .text-primary {
-    color: hsl(var(--primary));
-  }
-
-  .text-foreground {
-    color: hsl(var(--foreground));
-  }
-
-  .text-muted-foreground {
-    color: hsl(var(--muted-foreground));
-  }
-
-  .bg-background {
-    background-color: hsl(var(--background));
-  }
-
-  .bg-quiz-correct {
-    background-color: hsl(var(--quiz-correct));
-  }
-
-  .bg-quiz-incorrect {
-    background-color: hsl(var(--quiz-incorrect));
-  }
-
-  .bg-quiz-neutral {
-    background-color: hsl(var(--quiz-neutral));
-  }
-
-  .bg-quiz-selected {
-    background-color: hsl(var(--quiz-selected));
-  }
-
-  .border-primary {
-    border-color: hsl(var(--primary));
-  }
-
-  .border-quiz-correct {
-    border-color: hsl(var(--quiz-correct));
-  }
-
-  .border-quiz-incorrect {
-    border-color: hsl(var(--quiz-incorrect));
-  }
-
-  /* CARD UTILITIES - Enhanced for Celo 2.0 */
-  .card-elevated {
-    border: 3px solid hsl(var(--celo-black));
-    box-shadow: 6px 6px 0px hsl(var(--celo-black));
-    transition: var(--transition-fast);
-  }
-
-  .card-elevated:hover {
-    transform: translateY(-4px);
-    box-shadow: 8px 8px 0px hsl(var(--celo-black));
-  }
-
-  .card-simple {
-    border: 3px solid hsl(var(--celo-black));
-    box-shadow: 4px 4px 0px hsl(var(--celo-black));
-  }
-
-  /* ACCENT DECORATIONS */
-  .accent-corner {
-    position: relative;
-  }
-
-  .accent-corner::before {
+  .glass-panel::before {
     content: '';
     position: absolute;
-    top: -10px;
-    left: -10px;
-    width: 30px;
-    height: 8px;
-    background: hsl(var(--celo-yellow));
-    border: 2px solid hsl(var(--celo-black));
+    top: 0;
+    left: -50%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    transform: rotate(30deg);
+    pointer-events: none;
   }
 
-  /* RESPONSIVE UTILITIES */
-  .container-responsive {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: clamp(1rem, 4vw, 2rem);
+  .glass-button {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: hsl(var(--text-primary));
+    transition: all 0.3s ease;
+    border-radius: 9999px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
   }
 
-  /* SPACING UTILITIES */
-  .section-spacing {
-    margin-bottom: clamp(2rem, 5vw, 3rem);
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 20px rgba(var(--accent-cyan), 0.3);
+    transform: translateY(-1px);
   }
 
-  .element-spacing {
-    margin-bottom: clamp(1rem, 3vw, 1.5rem);
-  }
-}
-
-@layer base {
-  /* RAW ANIMATIONS - sharp, immediate feedback */
-  @keyframes bounce-raw {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
+  .glass-button-primary {
+    background: linear-gradient(135deg, hsl(var(--accent-cyan) / 0.2), hsl(var(--accent-blue) / 0.2));
+    border: 1px solid hsl(var(--accent-cyan) / 0.3);
+    color: hsl(var(--accent-cyan));
   }
 
-  @keyframes flash-raw {
-    0% { background: hsl(var(--celo-white)); }
-    50% { background: hsl(var(--celo-yellow)); }
-    100% { background: hsl(var(--celo-white)); }
+  .glass-button-primary:hover {
+    background: linear-gradient(135deg, hsl(var(--accent-cyan) / 0.3), hsl(var(--accent-blue) / 0.3));
+    box-shadow: 0 0 25px hsl(var(--accent-cyan) / 0.4);
   }
 
-  @keyframes shake-raw {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-3px); }
+  .text-glow {
+    text-shadow: 0 0 20px hsl(var(--accent-cyan) / 0.5);
   }
-
-  @keyframes color-invert {
-    0% {
-      background: hsl(var(--celo-white));
-      color: hsl(var(--celo-black));
-    }
-    50% {
-      background: hsl(var(--celo-black));
-      color: hsl(var(--celo-yellow));
-    }
-    100% {
-      background: hsl(var(--celo-white));
-      color: hsl(var(--celo-black));
-    }
-  }
-
-  @keyframes slide-block {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(0); }
+  
+  .border-glow {
+    box-shadow: 0 0 15px hsl(var(--accent-cyan) / 0.3);
   }
 }
 
-/* Legacy quiz styles for compatibility */
-.quiz-header {
-  background: hsl(var(--celo-yellow));
-  color: hsl(var(--celo-black));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  border-bottom: 2px solid hsl(var(--celo-black));
-  font-size: 1.2rem;
-  font-weight: 800;
-  text-transform: uppercase;
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: hsl(var(--text-primary));
 }
 
-.quiz-card {
-  background: hsl(var(--celo-white));
-  border-radius: 0px;
-  margin: 2rem auto;
-  padding: 2rem;
-  max-width: 540px;
-  min-width: 320px;
-  text-align: left;
-  color: hsl(var(--celo-black));
-  border: 3px solid hsl(var(--celo-black));
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  background: linear-gradient(to right, #fff, #ccc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(255,255,255,0.1);
 }
 
-.quiz-progress {
-  width: 100%;
-  height: 14px;
-  background: hsl(var(--muted));
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.04);
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.quiz-progress-bar {
-  height: 100%;
-  border-radius: 10px;
-  background: var(--gradient-primary);
-  transition: width 0.4s ease;
-  box-shadow: none;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.quiz-question {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: hsl(var(--foreground));
-  line-height: 1.4;
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
-.quiz-options {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.quiz-option-btn {
-  background: hsl(var(--celo-white));
-  border: 3px solid hsl(var(--celo-black));
-  border-radius: 0;
-  padding: 1.1rem 1.25rem;
-  font-size: 1rem;
-  font-weight: 700;
-  color: hsl(var(--celo-black));
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  text-align: left;
-}
-
-.quiz-option-btn:hover:not(:disabled) {
-  background: hsl(var(--celo-yellow));
-  color: hsl(var(--celo-black));
-}
-
-.quiz-option-btn.selected {
-  background: hsl(var(--quiz-selected));
-  border-color: hsl(var(--primary));
-  color: hsl(var(--foreground));
-}
-
-.quiz-option-btn.correct {
-  background: hsl(var(--quiz-correct) / 0.15);
-  border-color: hsl(var(--quiz-correct));
-  color: hsl(var(--foreground));
-}
-
-.quiz-option-btn.incorrect {
-  background: hsl(var(--destructive) / 0.15);
-  border-color: hsl(var(--destructive));
-  color: hsl(var(--foreground));
-}
-
-.quiz-submit-btn {
-  background: hsl(var(--celo-yellow));
-  color: hsl(var(--celo-black));
-  border: 3px solid hsl(var(--celo-black));
-  border-radius: 0;
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
-  font-weight: 900;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.quiz-submit-btn:hover:not(:disabled) {
-  background: hsl(var(--celo-black));
-  color: hsl(var(--celo-yellow));
-}
-
-.quiz-submit-btn:disabled {
-  background: hsl(var(--muted));
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-  color: hsl(var(--muted-foreground));
-}
-
-/* Form styling */
-input, textarea {
-  width: 100%;
-  padding: 1rem 1.25rem;
-  border: 2px solid hsl(var(--border));
-  border-radius: 12px;
-  font-size: 1rem;
-  background: hsl(var(--input));
-  color: hsl(var(--foreground));
-  transition: var(--transition-smooth);
-  box-sizing: border-box;
-}
-
-input:focus, textarea:focus {
-  outline: none;
-  border-color: hsl(var(--ring));
-  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.25);
-}
-
-input::placeholder, textarea::placeholder {
-  color: hsl(var(--muted-foreground));
-  font-weight: 400;
-}
-
-/* Success/Error messages */
-.success-message {
-  background: hsl(var(--quiz-correct) / 0.15);
-  border: 1px solid hsl(var(--quiz-correct));
-  color: hsl(var(--foreground));
-  padding: 1rem;
-  border-radius: 12px;
-  margin: 1rem 0;
-  font-weight: 500;
-}
-
-.error-message {
-  background: hsl(var(--destructive) / 0.15);
-  border: 1px solid hsl(var(--destructive));
-  color: hsl(var(--foreground));
-  padding: 1rem;
-  border-radius: 12px;
-  margin: 1rem 0;
-  font-weight: 500;
-}
-
-/* Typography overrides for compatibility */
-h1, h2, h3, h4, h5, h6, p, label, span {
-  color: hsl(var(--foreground));
-}
-
-.primary-text,
-.quiz-card h1,
-.quiz-card h2,
-.quiz-header {
-  color: hsl(var(--primary)) !important;
-}
-
-/* Remove conflicting shadcn OKLCH colors - keeping your custom HSL system */
-
-/* Fix for dialog overlay transparency */
-@layer components {
-  [data-slot="dialog-overlay"],
-  [data-radix-dialog-overlay] {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    backdrop-filter: blur(4px) !important;
-  }
-}
-
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
-}
-
-/* WalletConnect modal z-index fix - ensure it appears above all UI elements */
-/* WalletConnect v1/v2/v3 selectors */
-wcm-modal,
-wcm-container,
-w3m-modal,
-w3m-container,
-#walletconnect-wrapper,
-.walletconnect-modal,
-[data-wcm-container],
-[data-w3m-container],
-[class*="wcm-"],
-[class*="w3m-"],
-[class*="walletconnect"],
-onboard-v2,
-#onboard-walletconnect-container,
-walletconnect-modal,
-walletconnect-qrcode-modal {
-  z-index: 999999 !important;
-  position: fixed !important;
-}
-
-/* WalletConnect overlay/backdrop */
-wcm-overlay,
-wcm-backdrop,
-w3m-overlay,
-w3m-backdrop,
-[data-wcm-overlay],
-[data-w3m-overlay],
-[class*="wcm-overlay"],
-[class*="wcm-backdrop"],
-[class*="w3m-overlay"],
-[class*="w3m-backdrop"] {
-  z-index: 999998 !important;
-  position: fixed !important;
+/* WalletConnect Overrides for Glass Theme */
+wcm-modal {
+  --wcm-accent-color: hsl(var(--accent-cyan)) !important;
+  --wcm-background-color: hsl(var(--glass-bg-start)) !important;
 }

@@ -42,14 +42,16 @@ function App() {
         >
           <RouterProvider router={router} />
           <Toaster
-            theme="light"
-            position="bottom-right"
+            theme="dark"
+            position="top-center"
             toastOptions={{
               style: {
-                background: '#ffffff',
-                border: '1px solid #e5e7eb',
-                color: '#1f2937',
-                borderRadius: '12px'
+                background: 'rgba(30, 41, 59, 0.8)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: '#f8fafc',
+                borderRadius: '1rem',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
               },
             }}
           />
